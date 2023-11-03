@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Function to execute a command and print its output
+run_and_print_output() {
+    echo "Running: $@"
+    "$@"
+    local exit_code=$?
+    if [ $exit_code -eq 0 ]; then
+        echo "Command completed successfully"
+    else
+        echo "Command failed with exit code $exit_code"
+    fi
+}
+
+# Reload supervisorctl
+run_and_print_output supervisorctl reload
+
+# Delete PMTA queue
+run_and_print_output pmta delete --queue=*/*
+
+# Restart PMTA
+run_and_print_output service pmta restart
+
+# Restart PMTA HTTP
+run_and_print_output service pmtahttp restart
+
+# Restart MariaDB
+run_and_print_output service mariadb restart
+
+# Restart Apache HTTP server
+run_and_print_output service httpd restart
